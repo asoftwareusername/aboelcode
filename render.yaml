@@ -3,7 +3,7 @@ services:
     name: aboelcode-portfolio
     env: node
     buildCommand: mkdir -p ./data && npm install
-    startCommand: node server.js
+    startCommand: npm start
     plan: free
     autoDeploy: true
     envVars:
