@@ -1,9 +1,14 @@
 services:
   - type: web
-    name: aboelcode
+    name: aboelcode-portfolio
     env: node
-    buildCommand: npm install
+    buildCommand: mkdir -p ./data && npm install
     startCommand: node server.js
+    plan: free
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
-        value: production 
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: / 

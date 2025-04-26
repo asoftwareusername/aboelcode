@@ -36,14 +36,20 @@ const SKILLS_FILE = path.join(DATA_DIR, 'skills.json');
 const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
 
 // Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.log(`Created data directory at ${DATA_DIR}`);
+  }
+} catch (error) {
+  console.error(`Error creating data directory: ${error.message}`);
 }
 
 // Helper functions for file operations
 const readJsonFile = (filePath) => {
   try {
     if (!fs.existsSync(filePath)) {
+      console.warn(`File not found: ${filePath}`);
       return null;
     }
     const data = fs.readFileSync(filePath, 'utf8');
@@ -56,6 +62,12 @@ const readJsonFile = (filePath) => {
 
 const writeJsonFile = (filePath, data) => {
   try {
+    // Ensure the directory exists
+    const dirname = path.dirname(filePath);
+    if (!fs.existsSync(dirname)) {
+      fs.mkdirSync(dirname, { recursive: true });
+    }
+    
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
     return true;
   } catch (error) {
@@ -64,27 +76,79 @@ const writeJsonFile = (filePath, data) => {
   }
 };
 
-// Initialize empty data files if they don't exist
+// Initialize default data files if they don't exist
+// Profile
 if (!fs.existsSync(PROFILE_FILE)) {
-  writeJsonFile(PROFILE_FILE, {
+  const defaultProfile = {
     name: "Ahmed Aboelcode",
     title: "Full-Stack Developer",
     bio: "Passionate full-stack developer with expertise in creating responsive and user-friendly web applications.",
     email: "aboelcode@gmail.com",
-    location: "Egypt"
-  });
+    location: "Egypt",
+    github_url: "https://github.com/aboelcode",
+    facebook_url: "https://facebook.com/aboelcode",
+    linkedin_url: "https://linkedin.com/in/aboelcode",
+    profile_image: "/images/profile.jpg",
+    resume_url: "/files/resume.pdf"
+  };
+  
+  if (writeJsonFile(PROFILE_FILE, defaultProfile)) {
+    console.log(`Created default profile at ${PROFILE_FILE}`);
+  }
 }
 
+// Projects
 if (!fs.existsSync(PROJECTS_FILE)) {
-  writeJsonFile(PROJECTS_FILE, []);
+  const defaultProjects = [
+    {
+      id: 1,
+      title: "E-Commerce Platform",
+      description: "A full-stack e-commerce platform with product catalog, shopping cart, and payment integration.",
+      image_url: "/images/projects/ecommerce.jpg",
+      github_url: "https://github.com/aboelcode/ecommerce",
+      live_url: "https://ecommerce-demo.aboelcode.com",
+      featured: true,
+      display_order: 1,
+      technologies: ["Node.js", "Express", "JavaScript", "HTML", "CSS"]
+    },
+    {
+      id: 2,
+      title: "Task Management App",
+      description: "A task management application to help users organize their work with features like task categories, due dates, and progress tracking.",
+      image_url: "/images/projects/taskmanager.jpg",
+      github_url: "https://github.com/aboelcode/taskmanager",
+      live_url: "https://taskmanager-demo.aboelcode.com",
+      featured: true,
+      display_order: 2,
+      technologies: ["Node.js", "Express", "JavaScript", "HTML", "CSS"]
+    }
+  ];
+  
+  if (writeJsonFile(PROJECTS_FILE, defaultProjects)) {
+    console.log(`Created default projects at ${PROJECTS_FILE}`);
+  }
 }
 
+// Skills
 if (!fs.existsSync(SKILLS_FILE)) {
-  writeJsonFile(SKILLS_FILE, []);
+  const defaultSkills = [
+    { id: 1, name: "HTML", category: "Frontend", proficiency: 90, icon: "html5", display_order: 1 },
+    { id: 2, name: "CSS", category: "Frontend", proficiency: 85, icon: "css3", display_order: 2 },
+    { id: 3, name: "JavaScript", category: "Frontend", proficiency: 90, icon: "javascript", display_order: 3 },
+    { id: 4, name: "Node.js", category: "Backend", proficiency: 85, icon: "node-js", display_order: 5 },
+    { id: 5, name: "Express", category: "Backend", proficiency: 80, icon: "server", display_order: 6 }
+  ];
+  
+  if (writeJsonFile(SKILLS_FILE, defaultSkills)) {
+    console.log(`Created default skills at ${SKILLS_FILE}`);
+  }
 }
 
+// Messages
 if (!fs.existsSync(MESSAGES_FILE)) {
-  writeJsonFile(MESSAGES_FILE, []);
+  if (writeJsonFile(MESSAGES_FILE, [])) {
+    console.log(`Created empty messages file at ${MESSAGES_FILE}`);
+  }
 }
 
 console.log('Local JSON data files ready');
@@ -96,7 +160,15 @@ app.get('/api/profile', (req, res) => {
     if (profile) {
       res.json(profile);
     } else {
-      res.status(404).json({ error: 'Profile data not found' });
+      // If profile data doesn't exist, return default profile
+      const defaultProfile = {
+        name: "Ahmed Aboelcode",
+        title: "Full-Stack Developer",
+        bio: "Passionate full-stack developer with expertise in responsive web applications.",
+        email: "aboelcode@gmail.com",
+        location: "Egypt"
+      };
+      res.json(defaultProfile);
     }
   } catch (err) {
     console.error('Error fetching profile:', err);
@@ -110,7 +182,8 @@ app.get('/api/projects', (req, res) => {
     if (projects) {
       res.json(projects);
     } else {
-      res.status(404).json({ error: 'Projects data not found' });
+      // Return empty array if no projects found
+      res.json([]);
     }
   } catch (err) {
     console.error('Error fetching projects:', err);
@@ -124,7 +197,8 @@ app.get('/api/skills', (req, res) => {
     if (skills) {
       res.json(skills);
     } else {
-      res.status(404).json({ error: 'Skills data not found' });
+      // Return empty array if no skills found
+      res.json([]);
     }
   } catch (err) {
     console.error('Error fetching skills:', err);
@@ -162,6 +236,11 @@ app.post('/api/contact', (req, res) => {
     console.error('Error saving message:', err);
     res.status(500).json({ error: 'Failed to save message' });
   }
+});
+
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
 // Serve static files
