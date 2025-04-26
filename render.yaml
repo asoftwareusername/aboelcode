@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: aboelcode-portfolio
+    name: aboelcodez
     env: node
-    buildCommand: mkdir -p ./data && npm install
-    startCommand: npm start
+    buildCommand: npm install
+    startCommand: node server.js
     plan: free
     autoDeploy: true
     envVars:
