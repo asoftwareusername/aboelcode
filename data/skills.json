@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "HTML", "category": "Frontend", "proficiency": 90, "icon": "html5", "display_order": 1 },
+  { "id": 2, "name": "CSS", "category": "Frontend", "proficiency": 85, "icon": "css3", "display_order": 2 },
+  { "id": 3, "name": "JavaScript", "category": "Frontend", "proficiency": 90, "icon": "javascript", "display_order": 3 },
+  { "id": 4, "name": "Responsive Design", "category": "Frontend", "proficiency": 85, "icon": "mobile", "display_order": 4 },
+  { "id": 5, "name": "Node.js", "category": "Backend", "proficiency": 85, "icon": "node-js", "display_order": 5 },
+  { "id": 6, "name": "Express", "category": "Backend", "proficiency": 80, "icon": "server", "display_order": 6 },
+  { "id": 7, "name": "SQLite", "category": "Database", "proficiency": 75, "icon": "database", "display_order": 7 },
+  { "id": 8, "name": "PostgreSQL", "category": "Database", "proficiency": 70, "icon": "database", "display_order": 8 },
+  { "id": 9, "name": "Git", "category": "Tools", "proficiency": 85, "icon": "git", "display_order": 9 },
+  { "id": 10, "name": "Python", "category": "Programming", "proficiency": 75, "icon": "python", "display_order": 10 }
+] 

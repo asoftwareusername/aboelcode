@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Dependency directories
+node_modules/
+
+# Database files
+*.sqlite3
+*.sqlite
+*.db
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+
+# IDE / Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db 
